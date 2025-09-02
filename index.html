@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For My Piggy</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(135deg, #FFD3E2, #FFB6C1);
+      font-family: 'Caveat', cursive;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    canvas#confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .message {
+      text-align: center;
+      color: #FF4C4C;
+      z-index: 1;
+      max-width: 80%;
+      margin-top: 40px;
+    }
+
+    .message h2 {
+      font-size: 2.8rem;
+      margin: 0;
+    }
+
+    .message h1 {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    .message p {
+      font-size: 1.4rem;
+      margin: 10px 0;
+    }
+
+    .card {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      z-index: 1;
+      position: relative;
+      margin: 30px 0 60px 0; /* space from message above & bottom */
+    }
+
+    .card h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      width: 100%;
+      max-width: 300px;
+      border: 2px solid #FF6B6B;
+      border-radius: 10px;
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      margin: 0 auto 15px auto;
+      display: block;
+      outline: none;
+    }
+
+    button {
+      background: #FF6B6B;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-family: 'Caveat', cursive;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #FF4C4C;
+    }
+
+    #error {
+      color: red;
+      margin-top: 10px;
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 500px) {
+      .message h2 { font-size: 2rem; }
+      .message h1 { font-size: 1.6rem; }
+      .message p { font-size: 1.2rem; }
+      .card h2 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti"></canvas>
+
+  <!-- Top message -->
+  <div class="message">
+    <h2>Hey Piggyyy!!!</h2> 
+    <h1>Welcome to my website (built just for you) <3</h1>
+    <p>I know you pretty well and mujhe pata h if I tell you not to do something you will do exactly that.<br> Isiliye mujhe ye password box wala mehnat karna pada taki aapko jabardasti mera baat maana pade. <br> Kuch nhi dekh paoge until and unless password nhi daloge... <br> Try karlo... Kya ho sakta h password? <br> Hmmmm..... Socho socho.....</p>
+  </div>
+
+  <!-- Password card -->
+  <div class="card">
+    <h2>Password daalo... 🔑</h2>
+    <input type="password" id="passwordInput" placeholder="Type your password...">
+    <button onclick="checkPassword()">Enter</button>
+    <p id="error"></p>
+  </div>
+
+  <script>
+    // Password pages
+    const pages = {
+      "day10": "day10.html",
+      "day9": "day9.html",
+      "happy": "birthday.html"
+    };
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value.trim().toLowerCase();
+      if (pages[input]) {
+        window.location.href = pages[input];
+      } else {
+        document.getElementById("error").innerText = "Arey bhai itna easy thori hoga... Sochooo...";
+      }
+    }
+
+    // Heart confetti
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ['#FF6B6B', '#FF4C4C', '#FF85A2', '#FFB6C1', '#FF99AA'];
+    const confettiCount = 60;
+    const confetti = [];
+
+    for (let i = 0; i < confettiCount; i++) {
+      confetti.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 12 + 8,
+        speed: Math.random() * 0.5 + 0.2,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      });
+    }
+
+    function drawHeart(x, y, size, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      const topCurveHeight = size * 0.3;
+      ctx.moveTo(x, y + topCurveHeight);
+      ctx.bezierCurveTo(x, y, x - size, y, x - size, y + topCurveHeight);
+      ctx.bezierCurveTo(x - size, y + (size + topCurveHeight)/2, x, y + (size + topCurveHeight), x, y + size);
+      ctx.bezierCurveTo(x, y + (size + topCurveHeight), x + size, y + (size + topCurveHeight)/2, x + size, y + topCurveHeight);
+      ctx.bezierCurveTo(x + size, y, x, y, x, y + topCurveHeight);
+      ctx.fill();
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < confettiCount; i++) {
+        const p = confetti[i];
+        drawHeart(p.x, p.y, p.size, p.color);
+        p.y += p.speed;
+        if (p.y > canvas.height + 20) {
+          p.y = -20;
+          p.x = Math.random() * canvas.width;
+          p.color = colors[Math.floor(Math.random() * colors.length)];
+          p.size = Math.random() * 12 + 8;
+          p.speed = Math.random() * 0.5 + 0.2;
+        }
+      }
+    }
+
+    setInterval(drawConfetti, 30);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+
+</body>
+</html>
